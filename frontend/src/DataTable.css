@@ -1,0 +1,8 @@
+.DataTable{
+    font-size: 2rem;
+}
+
+.DataTable th.MuiTableCell-root, td.MuiTableCell-root{
+    font-size: inherit;
+    border: 1px solid lightgray; 
+}
