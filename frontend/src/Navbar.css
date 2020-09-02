@@ -1,0 +1,20 @@
+.Navbar div{
+    background-color: rgb(13, 37, 75);
+}
+
+.Navbar a{
+    text-decoration: none;
+    color:inherit;
+}
+
+.Navbar div.grow{
+    flex-grow: 1;
+}
+
+.Navbar button{
+    margin-right:1vw;
+}
+
+.Navbar sup{
+    font-size: 0.5em;
+}

@@ -6,3 +6,11 @@
     font-size: inherit;
     border: 1px solid lightgray; 
 }
+
+.DataTable hr{
+    border: 0;
+    height: 2px;
+    width: 100%;
+    margin-top: 10vh;
+    background-image: linear-gradient(to right, rgba(211, 211, 211, 0), rgba(211, 211, 211, 0.75), rgba(211, 211, 211, 0));
+}
