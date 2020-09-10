@@ -7,7 +7,6 @@ import './Form.css';
 
 export default function Form(props) {
     let type = props.type;
-    let causeUpdate = props.causeUpdate;
 
     function UnitForm(props) {
         return (
@@ -60,6 +59,10 @@ export default function Form(props) {
         }
     }
 
+    function success() {
+        document.querySelector("#success").textContent = "Entry Added!";
+    }
+
     async function handleSubmit(type) {
         let body = await createBody(type);
         clearForm(type);
@@ -67,7 +70,7 @@ export default function Form(props) {
         xhr.open("POST", "/api/" + type, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(body));
-        xhr.onloadend = causeUpdate; //need to update the page with new data
+        xhr.onloadend = success(); //inform user addition is done
     }
 
     function FormButton(props) {
@@ -106,6 +109,7 @@ export default function Form(props) {
                     <FormMain type={type} />
                     <FormButton type={type} content={"SAVE"} />
                 </Grid>
+                <p id="success"></p>
             </form >
         </div>
     );

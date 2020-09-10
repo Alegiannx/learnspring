@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,13 +8,28 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Grid, Box } from '@material-ui/core';
 import './DataTable.css';
-import Form from './Form.js';
 
 export default function DataTable(props) {
-    const data = props.data; //array of objects of type type
+
+    const [data, setData] = useState([]);
+    const [dirty, setDirty] = useState(false);
+
+    async function updateData() {
+        await fetch("/api/" + props.view + "s")
+            .then((res) => res.json())
+            .then((res) => {
+                setData(res);
+                setDirty(false);
+            },
+                (err) => console.log(err));
+    }
+
+    useEffect(() => {
+        updateData();
+    }, [dirty]);
+
     const type = guessType(data); //either employee or department
     let keys = getTrimmedKeys(data, type);
-    let causeUpdate = props.causeUpdate;
 
     function capitalize(string) { //capitalize the first letter of a string
         if (string) {
@@ -76,15 +91,6 @@ export default function DataTable(props) {
         }
     }
 
-    function TableForms(props) {
-        return (
-            <Grid item xs={11} md={8}>
-                <Form causeUpdate={causeUpdate} type="department" text="Add a new Department:" />
-                <Form causeUpdate={causeUpdate} type="employee" text="Add a new Employee:" />
-            </Grid>
-        );
-    }
-
     function TableMain(props) {
         let type = props.type;
         let keys = props.keys;
@@ -141,23 +147,25 @@ export default function DataTable(props) {
         return null;
     }
 
-    return (
-        <div className="DataTable">
-            {/* use grid to make responsive */}
-            <Grid container direction="column" alignItems="center">
-                <TableForms />
-                <hr />
-                <Grid item xs={10} md={6}>
-                    <p>Our Data Table for {type + "s"}:</p>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="simple table">
-                            {/* split the table in 2 parts for readability */}
-                            <TableHeader type={type} keys={keys} />
-                            <TableMain type={type} data={data} keys={keys} />
-                        </Table>
-                    </TableContainer >
+    if (data !== []) { //check if data has had time to load
+        return (
+            <div className="DataTable">
+                {/* use grid to make responsive */}
+                <Grid container direction="column" alignItems="center">
+                    <hr />
+                    <Grid item xs={10} md={6}>
+                        <p>Our Data Table for {type + "s"}:</p>
+                        <TableContainer component={Paper}>
+                            <Table aria-label="simple table">
+                                {/* split the table in 2 parts for readability */}
+                                <TableHeader type={type} keys={keys} />
+                                <TableMain type={type} data={data} keys={keys} />
+                            </Table>
+                        </TableContainer >
+                    </Grid>
                 </Grid>
-            </Grid>
-        </div>
-    );
+            </div>
+        );
+    }
+    return <p>Loading...</p>;
 }

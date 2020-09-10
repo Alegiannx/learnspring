@@ -1,38 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './App.css';
+import Home from './Home';
+import DepartmentForm from './DepartmentForm';
+import EmployeeForm from './EmployeeForm';
 import DataTable from './DataTable';
-import Title from './Title';
 import Navbar from './Navbar';
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+
 export default function App() {
-
-  const [data, setData] = useState([]);
-  const [requestType, setRequestType] = useState("employee");
-  const [dirty, setDirty] = useState(false);
-
-  async function updateData(t) {
-    await fetch("/api/" + t + "s")
-      .then((res) => res.json())
-      .then((res) => {
-        setData(res);
-        setDirty(false);
-      },
-        (err) => console.log(err));
-  }
-
-  useEffect(() => {
-    updateData(requestType);
-  }, [requestType, dirty]);
-
-  if (data) {
-    return (
-      <div className="App">
-        <Navbar setRequestType={setRequestType} />
-        <Title text="Welcome to the Company Website" />
-        <DataTable causeUpdate={() => { setDirty(true); }} data={data} />
-      </div>
-    );
-  }
-  return <p>Loading...</p>;
-
+  return (
+    <div className="App">
+      <Router>
+        <Navbar />
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route path="/employees">
+            <DataTable view="employee" />
+          </Route>
+          <Route path="/departments">
+            <DataTable view="department" />
+          </Route>
+          <Route path="/department/new">
+            <DepartmentForm />
+          </Route>
+          <Route path="/employee/new">
+            <EmployeeForm />
+          </Route>
+        </Switch>
+      </Router>
+    </div>
+  );
 }
