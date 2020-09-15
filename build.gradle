@@ -14,13 +14,6 @@ configurations {
 	}
 }
 
-task compileFront(type: Exec){
-	workingDir './frontend/'
-	commandLine 'npm', 'run', 'build'	
-}
-
-bootRun.dependsOn compileFront
-
 repositories {
 	mavenCentral()
 }

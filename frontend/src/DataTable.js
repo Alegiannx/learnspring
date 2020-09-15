@@ -12,10 +12,10 @@ import './DataTable.css';
 export default function DataTable(props) {
 
     const [data, setData] = useState([]);
-    const [dirty, setDirty] = useState(false);
+    const [dirty, setDirty] = useState(false); //marks need to update
 
     async function updateData() {
-        await fetch("/api/" + props.view + "s")
+        await fetch("/api/" + props.view + "s") // eg /api/employees
             .then((res) => res.json())
             .then((res) => {
                 setData(res);
@@ -28,8 +28,8 @@ export default function DataTable(props) {
         updateData();
     }, [dirty]);
 
-    const type = guessType(data); //either employee or department
-    let keys = getTrimmedKeys(data, type);
+    let type = guessType(); //either employee or department
+    let keys = getTrimmedKeys(type);
 
     function capitalize(string) { //capitalize the first letter of a string
         if (string) {
@@ -97,11 +97,11 @@ export default function DataTable(props) {
         const departmentIndex = keys.indexOf("department");
         if (departmentIndex !== -1) keys.splice(departmentIndex, 1); //cant add entire object to a cell!
 
-        if (props.data.map) {
+        if (data.map) {
             return (
                 <TableBody>
                     {
-                        props.data.map((entry) => (
+                        data.map((entry) => (
                             <TableRow key={entry[selectPrimaryKey(type)]}>
                                 {/* every row starts with the entry's "primary key" */}
                                 <TableCell component="th" scope="row">
@@ -123,7 +123,7 @@ export default function DataTable(props) {
         return null;
     }
 
-    function getTrimmedKeys(data, type) {
+    function getTrimmedKeys(type) {
         let keys = [];
         if (data[0]) { //defensive
             keys = Object.keys(data[0]); //get the keys of the data object
@@ -135,7 +135,7 @@ export default function DataTable(props) {
         return keys;
     }
 
-    function guessType(data) { //infer type from data
+    function guessType() { //infer type from data
         if (data[0]) {
             let d = data[0];
             if (d.title) {
@@ -152,14 +152,13 @@ export default function DataTable(props) {
             <div className="DataTable">
                 {/* use grid to make responsive */}
                 <Grid container direction="column" alignItems="center">
-                    <hr />
                     <Grid item xs={10} md={6}>
                         <p>Our Data Table for {type + "s"}:</p>
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
                                 {/* split the table in 2 parts for readability */}
                                 <TableHeader type={type} keys={keys} />
-                                <TableMain type={type} data={data} keys={keys} />
+                                <TableMain type={type} keys={keys} />
                             </Table>
                         </TableContainer >
                     </Grid>
